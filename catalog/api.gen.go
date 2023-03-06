@@ -13,7 +13,7 @@ import (
 	runt "runtime"
 	"strings"
 
-	"gopkg.me/selling-partner-api-sdk/pkg/runtime"
+	"github.com/dpoetzschke/selling-partner-api-sdk/pkg/runtime"
 )
 
 // RequestBeforeFn  is the function signature for the RequestBefore callback function
@@ -128,12 +128,43 @@ type ClientInterface interface {
 	// ListCatalogItems request
 	ListCatalogItems(ctx context.Context, params *ListCatalogItemsParams) (*http.Response, error)
 
+	SearchCatalogItems(ctx context.Context, params *SearchCatalogItemsParams) (*http.Response, error)
+
 	// GetCatalogItem request
 	GetCatalogItem(ctx context.Context, asin string, params *GetCatalogItemParams) (*http.Response, error)
 }
 
 func (c *Client) ListCatalogCategories(ctx context.Context, params *ListCatalogCategoriesParams) (*http.Response, error) {
 	req, err := NewListCatalogCategoriesRequest(c.Endpoint, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	req.Header.Set("User-Agent", c.UserAgent)
+	if c.RequestBefore != nil {
+		err = c.RequestBefore(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.ResponseAfter != nil {
+		err = c.ResponseAfter(ctx, rsp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return rsp, nil
+}
+
+func (c *Client) SearchCatalogItems(ctx context.Context, params *SearchCatalogItemsParams) (*http.Response, error) {
+	req, err := NewSearchCatalogItemsRequest(c.Endpoint, params)
 	if err != nil {
 		return nil, err
 	}
@@ -283,6 +314,53 @@ func NewListCatalogCategoriesRequest(endpoint string, params *ListCatalogCategor
 		}
 
 	}
+
+	queryUrl.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryUrl.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+func NewSearchCatalogItemsRequest(endpoint string, params *SearchCatalogItemsParams) (*http.Request, error) {
+	var err error
+
+	queryUrl, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	basePath := fmt.Sprintf("/catalog/2022-04-01/items")
+	if basePath[0] == '/' {
+		basePath = basePath[1:]
+	}
+
+	queryUrl, err = queryUrl.Parse(basePath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryUrl.Query()
+
+	if queryFrag, err := runtime.StyleParam("form", true, "marketplaceIds", params.MarketplaceIds); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryValues.Add("includedData", params.IncludedData)
+	queryValues.Add("identifiers", params.Identifiers)
+	queryValues.Add("identifiersType", params.IdentifiersType)
+	queryValues.Add("sellerId", params.SellerId)
 
 	queryUrl.RawQuery = queryValues.Encode()
 
@@ -566,6 +644,12 @@ type ListCatalogItemsResp struct {
 	Model        *ListCatalogItemsResponse
 }
 
+type SearchCatalogItemsResp struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	Model        *SearchCatalogItemsResponse
+}
+
 // Status returns HTTPResponse.Status
 func (r ListCatalogItemsResp) Status() string {
 	if r.HTTPResponse != nil {
@@ -613,6 +697,14 @@ func (c *ClientWithResponses) ListCatalogCategoriesWithResponse(ctx context.Cont
 	return ParseListCatalogCategoriesResp(rsp)
 }
 
+func (c *ClientWithResponses) SearchCatalogItemsWithResponse(ctx context.Context, params *SearchCatalogItemsParams) (*SearchCatalogItemsResp, error) {
+	rsp, err := c.SearchCatalogItems(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSearchCatalogItemsResp(rsp)
+}
+
 // ListCatalogItemsWithResponse request returning *ListCatalogItemsResponse
 func (c *ClientWithResponses) ListCatalogItemsWithResponse(ctx context.Context, params *ListCatalogItemsParams) (*ListCatalogItemsResp, error) {
 	rsp, err := c.ListCatalogItems(ctx, params)
@@ -645,6 +737,32 @@ func ParseListCatalogCategoriesResp(rsp *http.Response) (*ListCatalogCategoriesR
 	}
 
 	var dest ListCatalogCategoriesResponse
+	if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+		return nil, err
+	}
+
+	response.Model = &dest
+
+	if rsp.StatusCode >= 300 {
+		err = fmt.Errorf(rsp.Status)
+	}
+
+	return response, err
+}
+
+func ParseSearchCatalogItemsResp(rsp *http.Response) (*SearchCatalogItemsResp, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SearchCatalogItemsResp{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	var dest SearchCatalogItemsResponse
 	if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 		return nil, err
 	}

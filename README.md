@@ -1,15 +1,15 @@
 # Amazon's Selling Partner API (SP-API) Golang SDK
 
-[![Go Reference](https://pkg.go.dev/badge/gopkg.me/selling-partner-api-sdk.svg)](https://pkg.go.dev/gopkg.me/selling-partner-api-sdk)
+[![Go Reference](https://pkg.go.dev/badge/github.com/dpoetzschke/selling-partner-api-sdk.svg)](https://pkg.go.dev/github.com/dpoetzschke/selling-partner-api-sdk)
 
 ## Installation
 
 ~~~~
-go get -u gopkg.me/selling-partner-api-sdk
+go get -u github.com/dpoetzschke/selling-partner-api-sdk
 ~~~~
 
 ## Progress
-                    
+
 * [X] authorization ([authorization-api-model](https://github.com/amzn/selling-partner-api-models/blob/main/models/authorization-api-model/authorization.json) [DOC](https://github.com/amzn/selling-partner-api-docs/blob/main/references/authorization-api/authorization.md))
 * [X] catalog ([catalog-items-api-model](https://github.com/amzn/selling-partner-api-docs/blob/main/references/catalog-items-api/catalogItemsV0.md) [DOC](https://github.com/amzn/selling-partner-api-docs/blob/main/references/catalog-items-api/catalogItemsV0.md))
 * [X] fbaInbound ([fulfillment-inbound-api-model](https://github.com/amzn/selling-partner-api-docs/blob/main/references/fulfillment-inbound-api/fulfillmentInboundV0.md) [DOC](https://github.com/amzn/selling-partner-api-docs/blob/main/references/fulfillment-inbound-api/fulfillmentInboundV0.md))
@@ -42,16 +42,16 @@ import (
 	"log"
 	"net/http"
 	"net/http/httputil"
-	
-	sp "gopkg.me/selling-partner-api-sdk/pkg/selling-partner"
-	"gopkg.me/selling-partner-api-sdk/sellers"
+
+	sp "github.com/dpoetzschke/selling-partner-api-sdk/pkg/selling-partner"
+	"github.com/dpoetzschke/selling-partner-api-sdk/sellers"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
 func main() {
-	
+
 	sellingPartner, err := sp.NewSellingPartner(&sp.Config{
 		ClientID:     "<ClientID>",
 		ClientSecret: "<ClientSecret>",
@@ -109,8 +109,8 @@ func main() {
 #Report Decryption
 Amazon specification of version `2020-09-04` returns encrypted reports. To decrypt the reports you could use [the Decrypt function of the decryption package](./pkg/decryption/decryptor.go).
 ### Test example
-The test example uses `amzn.GetReportDocumentResponse` from [Amazon models](https://github.com/amzn/selling-partner-api-models/blob/main/models/reports-api-model/reports_2020-09-04.json#L137) and the 
-Decrypt function to download, decrypt and dump report. 
+The test example uses `amzn.GetReportDocumentResponse` from [Amazon models](https://github.com/amzn/selling-partner-api-models/blob/main/models/reports-api-model/reports_2020-09-04.json#L137) and the
+Decrypt function to download, decrypt and dump report.
 ```go
 func TestSellingPartnerGetReportDocumentThirdParty(t *testing.T) {
 	sellingPartner, err := sp.NewSellingPartner(&sp.Config{

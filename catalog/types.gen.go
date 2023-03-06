@@ -416,8 +416,36 @@ type Item struct {
 	SalesRankings *SalesRankList `json:"SalesRankings,omitempty"`
 }
 
+type IdentifierMP struct {
+	IdentifierType string `json:"identifierType"`
+	Identifier string `json:"identifier"`
+}
+
+type Identifier struct {
+	MarketplaceId string `json:"marketplaceId"`
+	Identifiers  []IdentifierMP `json:"identifiers"`
+}
+
+type SearchSummaries struct {
+	ItemClassification string `json:"itemClassification"`
+}
+
+type SearchItem struct {
+	Asin string `json:"asin"`
+	// Attributes map[string]interface{} `json:"attributes"`
+	// Dimensions map[string]interface{} `json:"dimensions"`
+	Identifiers []Identifier `json:"identifiers"`
+	// Images map[string]interface{} `json:"images"`
+	// ProductTypes map[string]interface{} `json:"productTypes"`
+	// Relationships map[string]interface{} `json:"relationships"`
+	// SalesRanks map[string]interface{} `json:"salesRanks"`
+	Summaries []SearchSummaries `json:"summaries"`
+	// VendorDetails map[string]interface{} `json:"vendorDetails"`
+}
+
 // ItemList defines model for ItemList.
 type ItemList []Item
+type SearchItemList []SearchItem
 
 // LanguageType defines model for LanguageType.
 type LanguageType struct {
@@ -448,11 +476,27 @@ type ListCatalogItemsResponse struct {
 	Payload *ListMatchingItemsResponse `json:"payload,omitempty"`
 }
 
+type SearchCatalogItemsResponse struct {
+	Items []SearchItem `json:"Items,omitempty"`
+}
+
 // ListMatchingItemsResponse defines model for ListMatchingItemsResponse.
 type ListMatchingItemsResponse struct {
 
 	// A list of items.
 	Items *ItemList `json:"Items,omitempty"`
+}
+
+type SearchMatchingItemsResponse struct {
+	NumberOfResults int `json:"numberOfResults"`
+	Pagination *SearchItemPagination `json:"pagination"`
+	// Refinements *Refinements `json:"refinements"`
+	Items *SearchItemList `json:"items"`
+}
+
+type SearchItemPagination struct {
+	NextToken string `json:"nextToken"`
+	PreviousToken string `json:"previousToken"`
 }
 
 // ListOfCategories defines model for ListOfCategories.
@@ -621,6 +665,27 @@ type ListCatalogCategoriesParams struct {
 
 	// Used to identify items in the given marketplace. SellerSKU is qualified by the seller's SellerId, which is included with every operation that you submit.
 	SellerSKU *string `json:"SellerSKU,omitempty"`
+}
+
+type SearchCatalogItemsParams struct {
+	//comma-list
+	MarketplaceIds string `json:"marketplaceIds"`
+	//comma-list
+	Identifiers string `json:"identifiers,omitempty"`
+	// one of: ASIN, EAN, GTIN, ISBN, JAN, MINSAN, SKU, UPC
+	IdentifiersType string `json:"identifiersType,omitempty"`
+	// comma-list
+	IncludedData string `json:"includedData,omitempty"`
+	Locale string `json:"locale,omitempty"`
+	SellerId string `json:"sellerId,omitempty"`
+	// comma-list
+	Keywords string `json:"keywords,omitempty"`
+	BrandNames string `json:"brandNames,omitempty"`
+	ClassificationsIds string `json:"classificationsIds,omitempty"`
+	// max 20 default 10
+	PageSize int `json:"pageSize,omitempty"`
+	PageToken string `json:"pageToken,omitempty"`
+	KeywordsLocale string `json:"keywordsLocale,omitempty"`
 }
 
 // ListCatalogItemsParams defines parameters for ListCatalogItems.
