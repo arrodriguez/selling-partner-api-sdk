@@ -1,4 +1,4 @@
-module github.com/dpoetzschke/selling-partner-api-sdk
+module github.com/arrodriguez/selling-partner-api-sdk
 
 go 1.16
 
