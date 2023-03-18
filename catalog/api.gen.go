@@ -362,6 +362,10 @@ func NewSearchCatalogItemsRequest(endpoint string, params *SearchCatalogItemsPar
 	queryValues.Add("identifiersType", params.IdentifiersType)
 	queryValues.Add("sellerId", params.SellerId)
 
+	if len(params.Identifiers) == 0 {
+		queryValues.Add("keywords", params.Keywords)
+	}
+
 	queryUrl.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryUrl.String(), nil)
