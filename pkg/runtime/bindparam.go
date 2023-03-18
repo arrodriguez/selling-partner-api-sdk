@@ -23,7 +23,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/dpoetzschke/selling-partner-api-sdk/pkg/types"
+	"github.com/arrodriguez/selling-partner-api-sdk/pkg/types"
 )
 
 // This function binds a parameter as described in the Path Parameters

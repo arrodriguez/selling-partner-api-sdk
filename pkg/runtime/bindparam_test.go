@@ -21,7 +21,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/dpoetzschke/selling-partner-api-sdk/pkg/types"
+	"github.com/arrodriguez/selling-partner-api-sdk/pkg/types"
 )
 
 func TestSplitParameter(t *testing.T) {

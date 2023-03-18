@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dpoetzschke/selling-partner-api-sdk/pkg/types"
+	"github.com/arrodriguez/selling-partner-api-sdk/pkg/types"
 )
 
 // This function takes a string, and attempts to assign it to the destination
