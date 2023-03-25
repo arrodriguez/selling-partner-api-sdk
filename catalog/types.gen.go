@@ -380,7 +380,7 @@ type GetCatalogItemResponse struct {
 	Errors *ErrorList `json:"errors,omitempty"`
 
 	// An item in the Amazon catalog.
-	Payload *Item `json:"payload,omitempty"`
+	Payload *SearchItem `json:"payload,omitempty"`
 }
 
 // IdentifierType defines model for IdentifierType.
@@ -418,12 +418,12 @@ type Item struct {
 
 type IdentifierMP struct {
 	IdentifierType string `json:"identifierType"`
-	Identifier string `json:"identifier"`
+	Identifier     string `json:"identifier"`
 }
 
 type Identifier struct {
-	MarketplaceId string `json:"marketplaceId"`
-	Identifiers  []IdentifierMP `json:"identifiers"`
+	MarketplaceId string         `json:"marketplaceId"`
+	Identifiers   []IdentifierMP `json:"identifiers"`
 }
 
 type SearchSummaries struct {
@@ -431,15 +431,15 @@ type SearchSummaries struct {
 }
 
 type SearchItem struct {
-	Asin string `json:"asin"`
-	// Attributes map[string]interface{} `json:"attributes"`
+	Asin       string                 `json:"asin"`
+	Attributes map[string]interface{} `json:"attributes"`
 	// Dimensions map[string]interface{} `json:"dimensions"`
 	Identifiers []Identifier `json:"identifiers"`
 	// Images map[string]interface{} `json:"images"`
 	// ProductTypes map[string]interface{} `json:"productTypes"`
 	// Relationships map[string]interface{} `json:"relationships"`
-	// SalesRanks map[string]interface{} `json:"salesRanks"`
-	Summaries []SearchSummaries `json:"summaries"`
+	SalesRanks map[string]interface{} `json:"salesRanks"`
+	Summaries  []SearchSummaries      `json:"summaries"`
 	// VendorDetails map[string]interface{} `json:"vendorDetails"`
 }
 
@@ -488,14 +488,14 @@ type ListMatchingItemsResponse struct {
 }
 
 type SearchMatchingItemsResponse struct {
-	NumberOfResults int `json:"numberOfResults"`
-	Pagination *SearchItemPagination `json:"pagination"`
+	NumberOfResults int                   `json:"numberOfResults"`
+	Pagination      *SearchItemPagination `json:"pagination"`
 	// Refinements *Refinements `json:"refinements"`
 	Items *SearchItemList `json:"items"`
 }
 
 type SearchItemPagination struct {
-	NextToken string `json:"nextToken"`
+	NextToken     string `json:"nextToken"`
 	PreviousToken string `json:"previousToken"`
 }
 
@@ -676,15 +676,15 @@ type SearchCatalogItemsParams struct {
 	IdentifiersType string `json:"identifiersType,omitempty"`
 	// comma-list
 	IncludedData string `json:"includedData,omitempty"`
-	Locale string `json:"locale,omitempty"`
-	SellerId string `json:"sellerId,omitempty"`
+	Locale       string `json:"locale,omitempty"`
+	SellerId     string `json:"sellerId,omitempty"`
 	// comma-list
-	Keywords string `json:"keywords,omitempty"`
-	BrandNames string `json:"brandNames,omitempty"`
+	Keywords           string `json:"keywords,omitempty"`
+	BrandNames         string `json:"brandNames,omitempty"`
 	ClassificationsIds string `json:"classificationsIds,omitempty"`
 	// max 20 default 10
-	PageSize int `json:"pageSize,omitempty"`
-	PageToken string `json:"pageToken,omitempty"`
+	PageSize       int    `json:"pageSize,omitempty"`
+	PageToken      string `json:"pageToken,omitempty"`
 	KeywordsLocale string `json:"keywordsLocale,omitempty"`
 }
 
@@ -718,7 +718,8 @@ type ListCatalogItemsParams struct {
 
 // GetCatalogItemParams defines parameters for GetCatalogItem.
 type GetCatalogItemParams struct {
-
-	// A marketplace identifier. Specifies the marketplace for the item.
-	MarketplaceId string `json:"MarketplaceId"`
+	//comma-list
+	MarketplaceIds string `json:"marketplaceIds"`
+	IncludedData   string `json:"includedData,omitempty"`
+	Locale         string `json:"locale,omitempty"`
 }

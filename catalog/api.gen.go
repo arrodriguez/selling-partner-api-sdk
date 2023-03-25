@@ -547,7 +547,8 @@ func NewGetCatalogItemRequest(endpoint string, asin string, params *GetCatalogIt
 		return nil, err
 	}
 
-	basePath := fmt.Sprintf("/catalog/v0/items/%s", pathParam0)
+	basePath := fmt.Sprintf("/catalog/2022-04-01/items/%s", pathParam0)
+
 	if basePath[0] == '/' {
 		basePath = basePath[1:]
 	}
@@ -559,7 +560,7 @@ func NewGetCatalogItemRequest(endpoint string, asin string, params *GetCatalogIt
 
 	queryValues := queryUrl.Query()
 
-	if queryFrag, err := runtime.StyleParam("form", true, "MarketplaceId", params.MarketplaceId); err != nil {
+	if queryFrag, err := runtime.StyleParam("form", true, "marketplaceIds", params.MarketplaceIds); err != nil {
 		return nil, err
 	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 		return nil, err
@@ -570,6 +571,9 @@ func NewGetCatalogItemRequest(endpoint string, asin string, params *GetCatalogIt
 			}
 		}
 	}
+
+	queryValues.Add("includedData", params.IncludedData)
+	queryValues.Add("locale", params.Locale)
 
 	queryUrl.RawQuery = queryValues.Encode()
 
