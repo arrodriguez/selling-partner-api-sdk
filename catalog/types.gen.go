@@ -428,6 +428,7 @@ type Identifier struct {
 
 type SearchSummaries struct {
 	ItemClassification string `json:"itemClassification"`
+	ItemName           string `json:"itemName"`
 }
 
 type SearchItem struct {
