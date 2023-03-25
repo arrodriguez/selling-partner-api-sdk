@@ -438,10 +438,26 @@ type SearchItem struct {
 	// Images map[string]interface{} `json:"images"`
 	// ProductTypes map[string]interface{} `json:"productTypes"`
 	// Relationships map[string]interface{} `json:"relationships"`
-	SalesRanks map[string]interface{} `json:"salesRanks"`
-	Summaries  []SearchSummaries      `json:"summaries"`
+	SalesRanks ItemSalesRankByMarketplaceArr `json:"salesRanks"`
+	Summaries  []SearchSummaries             `json:"summaries"`
 	// VendorDetails map[string]interface{} `json:"vendorDetails"`
 }
+
+type ItemSalesRankByMarketplaceArr []ItemSalesRankByMarketplace
+
+type ItemSalesRankByMarketplace struct {
+	MarketplaceId       string                         `json:"marketplaceId"`
+	ClassificationRanks ItemClassificationSalesRankArr `json:"classificationRanks,omitempty"`
+}
+
+type ItemClassificationSalesRank struct {
+	ClassificationId string `json:"classificationId"`
+	Title            string `json:"title"`
+	Link             string `json:"link"`
+	Rank             uint64 `json:"rank"`
+}
+
+type ItemClassificationSalesRankArr []ItemClassificationSalesRank
 
 // ItemList defines model for ItemList.
 type ItemList []Item
